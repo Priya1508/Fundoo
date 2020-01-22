@@ -1,5 +1,7 @@
 package com.bridgelabz.fundoonotes.model;
 
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.data.annotation.Id;
 
 import lombok.Data;
@@ -9,11 +11,17 @@ public class User
 {
 	@Id
 	private String id;
+	@NotBlank
 	private String firstName;
 	private String lastName;
+	@NotBlank
 	private String emailId;
+	@NotBlank
 	private String password;
+	@NotBlank
 	private String confirmPassword;
+	
+	private String verify;
 	
 	public String getFirstName() 
 	{
@@ -63,6 +71,17 @@ public class User
 	public void setConfirmPassword(String confirmPassword) 
 	{
 		this.confirmPassword = confirmPassword;
+	}
+	
+
+	public String getVerify()
+	{
+		return verify;
+	}
+
+	public void setVerify(String verify) 
+	{
+		this.verify = verify;
 	}
 
 	@Override

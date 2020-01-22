@@ -30,6 +30,8 @@ public class Jwt
 	public String getUserToken(String token)
 	{
 		Claim claim = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token).getClaim("email");
+		
+		 System.out.println("claim"+claim);
 		return claim.asString();
 //		if (claim.isNull()) {
 //			throw new TokenException("token is empty");

@@ -1,11 +1,17 @@
 package com.bridgelabz.fundoonotes.dto;
 
+import javax.validation.constraints.NotBlank;
+
 public class RegistrationDto
 {
+	@NotBlank
 	private String firstName;
 	private String lastName;
+	@NotBlank
 	private String emailId;
+	@NotBlank
 	private String password;
+	@NotBlank
 	private String confirmPassword;
 	
 	public String getFirstName() {

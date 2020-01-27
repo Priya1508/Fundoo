@@ -12,6 +12,9 @@ public class Notes
 	private String title;
 	private String description;
 	private String emailId;
+	private boolean pin;
+	private boolean archive;
+	private boolean trash;
 	
 	public String getTitle() 
 	{
@@ -51,5 +54,35 @@ public class Notes
 	public void setId(String id)
 	{
 		this.id = id;
+	}
+
+	public boolean isPin() 
+	{
+		return pin;
+	}
+
+	public void setPin(boolean pin) 
+	{
+		this.pin = pin;
+	}
+
+	public boolean isArchive() 
+	{
+		return archive;
+	}
+
+	public void setArchive(boolean archive) 
+	{
+		this.archive = archive;
+	}
+
+	public boolean isTrash() 
+	{
+		return trash;
+	}
+
+	public void setTrash(boolean trash) 
+	{
+		this.trash = trash;
 	}
 }

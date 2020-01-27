@@ -24,24 +24,42 @@ public class NoteContoller
 	@PostMapping("/create")
 	public ResponseEntity<NotesResponse> createNote(@RequestBody NoteDto noteDto,@RequestParam String token)
 	{
-		return new ResponseEntity<NotesResponse>(service.createNote(noteDto, token),HttpStatus.OK);
+		return new ResponseEntity<NotesResponse>(service.createNote(noteDto, token), HttpStatus.OK);
 	}
 	
 	@GetMapping("/read")
-	public ResponseEntity<NotesResponse> readNote(@RequestParam String token)
+	public ResponseEntity<NotesResponse> readNote(@RequestParam String id)
 	{
-		return new ResponseEntity<NotesResponse>(service.readNote(token),HttpStatus.OK);
+		return new ResponseEntity<NotesResponse>(service.readNote(id), HttpStatus.OK);
 	}
 	
 	@PostMapping("/update")
 	public ResponseEntity<NotesResponse> updateNote(@RequestBody NoteDto noteDto,@RequestParam String token,@RequestParam String id)
 	{
-		return new ResponseEntity<NotesResponse>(service.updateNote(noteDto, token,id),HttpStatus.OK);
+		return new ResponseEntity<NotesResponse>(service.updateNote(noteDto, token,id), HttpStatus.OK);
 	}
 	
 	@PostMapping("/delete")
 	public ResponseEntity<NotesResponse> deleteNote(@RequestParam String id)
 	{
-		return new ResponseEntity<NotesResponse>(service.deleteNote(id),HttpStatus.OK);
+		return new ResponseEntity<NotesResponse>(service.deleteNote(id), HttpStatus.OK);
+	}
+	
+	@PostMapping("/pin")
+	public ResponseEntity<NotesResponse> pinNote(@RequestParam String id, @RequestParam String token)
+	{
+		return new ResponseEntity<NotesResponse>(service.pinNote(token, id), HttpStatus.OK);
+	}
+	
+	@PostMapping("/archive")
+	public ResponseEntity<NotesResponse> archiveNote(@RequestParam String id, @RequestParam String token)
+	{
+		return new ResponseEntity<NotesResponse>(service.archiveNote(token, id), HttpStatus.OK);
+	}
+	
+	@PostMapping("/trash")
+	public ResponseEntity<NotesResponse> trashNote(@RequestParam String token, @RequestParam String id)
+	{
+		return new ResponseEntity<NotesResponse>(service.trashNote(token, id), HttpStatus.OK);
 	}
 }

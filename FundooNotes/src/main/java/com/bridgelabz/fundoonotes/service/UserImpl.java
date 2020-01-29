@@ -1,7 +1,6 @@
 package com.bridgelabz.fundoonotes.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +54,7 @@ public class UserImpl implements UserService
 
 		if (userExist != null) 
 		{
-			System.out.println(environment.getProperty("USER_PRESENT"));
+			return new Response(400, environment.getProperty("USER_PRESENT"), HttpStatus.BAD_REQUEST);
 		} 
 		else 
 		{
@@ -65,10 +64,10 @@ public class UserImpl implements UserService
 				jms.sendMail(registrationDto.getEmailId(), token);
 				bcryptPasswordEncoder.encode(registrationDto.getPassword());
 				repository.save(user);
-				return new Response(environment.getProperty("SERVER_CODE_SUCCESS"), environment.getProperty("USER_CREATED"));
+				return new Response(200, environment.getProperty("USER_CREATED"), HttpStatus.OK);
 			}
+			return new Response(400, environment.getProperty("INVALID_PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
-		return new Response(environment.getProperty("SERVER_CODE_ERROR"), environment.getProperty("INVALID_CREDENTIALS"));
 	}
 
 	/**
@@ -79,26 +78,21 @@ public class UserImpl implements UserService
 	public Response login(LoginDto loginDto, String token)
 	{
 		String email = jwt.getUserToken(token);
-		System.out.println("email " + email);
 		User user = mapper.map(loginDto, User.class);
 		User repo = repository.findByEmailId(email);
 		if (repo == null) 
 		{
-			System.out.println("user not found");
+			return new Response(400, environment.getProperty("USER_NOT_FOUND"), HttpStatus.BAD_REQUEST);
 		}
 		else 
 		{
-			if (isVerify(email))
-			{
 				if (repo.getPassword().equals(loginDto.getPassword())) 
 				{
 					repository.save(user);
-					return new Response(environment.getProperty("SERVER_CODE_SUCCESS"), environment.getProperty("LOGIN_SUCCESS"));
+					return new Response(200, environment.getProperty("LOGIN_SUCCESS"), HttpStatus.OK);
 				}
-			}
-			return new Response(environment.getProperty("SERVER_CODE_ERROR"), environment.getProperty("TOKEN_ERROR"));
+			return new Response(400, environment.getProperty("TOKEN_ERROR"), HttpStatus.BAD_REQUEST);
 		}
-		return new Response(environment.getProperty("SERVER_CODE_ERROR"), environment.getProperty("INVALID_CREDENTIALS"));
 	}
 
 	/**
@@ -114,9 +108,9 @@ public class UserImpl implements UserService
 		{
 			String token = jwt.createToken(forgotPasswordDto.getEmailId());
 			jms.sendMail(forgotPasswordDto.getEmailId(), token);
-			return new Response(environment.getProperty("SERVER_CODE_SUCCESS"), environment.getProperty("FORGOT_PASSWORD"));
+			return new Response(200, environment.getProperty("FORGOT_PASSWORD"), HttpStatus.OK);
 		}
-		return new Response(environment.getProperty("SERVER_CODE_ERROR"), environment.getProperty("INVALID_CREDENTIALS"));
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -133,10 +127,10 @@ public class UserImpl implements UserService
 			if (resetPasswordDto.getPassword().equals(resetPasswordDto.getConfirmPassword()))
 			{
 				repository.save(user);
-				return new Response(environment.getProperty("SERVER_CODE_SUCCESS"), environment.getProperty("RESET_SUCCESS"));
+				return new Response(200, environment.getProperty("RESET_SUCCESS"), HttpStatus.OK);
 			}
 		}
-		return new Response(environment.getProperty("SERVER_CODE_ERROR"), environment.getProperty("INVALID_CREDENTIALS"));
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -153,20 +147,5 @@ public class UserImpl implements UserService
 			return user1;
 		}
 		return null;
-	}
-	
-	/**
-	 * @param token passed to verify the email
-	 * @return return true if verify is not null
-	 */
-	public boolean isVerify(String token)
-	{
-		User verify = repository.findByEmailId(token);
-		if(verify != null)
-		{
-			return true;
-		}
-		else
-			return false;
 	}
 }

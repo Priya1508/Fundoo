@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;
+import com.bridgelabz.fundoonotes.exceptionhandler.CustomException;
 
 @Component
 public class Jwt 
@@ -29,12 +30,43 @@ public class Jwt
 	 */
 	public String getUserToken(String token)
 	{
-		Claim claim = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token).getClaim("email");
-		
-		 System.out.println("claim"+claim);
-		return claim.asString();
-//		if (claim.isNull()) {
-//			throw new TokenException("token is empty");
-//		}	
+		try 
+		{
+			Claim claim = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token).getClaim("email");
+			System.out.println("claim"+claim);
+			return claim.asString();
+		} 
+		catch (Exception e)
+		{
+			throw new CustomException.InvalidToken("invalid token");
+		}	
+	}
+	
+	public String checkById(String id) 
+	{
+		try 
+		{
+			Claim claim = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(id).getClaim("id");
+			System.out.println("claim"+claim);
+			return claim.asString();
+		}
+		catch (Exception e) 
+		{
+			throw new CustomException.InvalidId("invalid note id");
+		}
+	}
+	
+	public String checkByLabelId(String labelId)
+	{
+		try 
+		{
+			Claim claim = JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(labelId).getClaim("label");
+			System.out.println("claim"+claim);
+			return claim.asString();
+		}
+		catch (Exception e) 
+		{
+			throw new CustomException.InvalidLabelId("invalid label id");
+		}
 	}
 }

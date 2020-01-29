@@ -2,38 +2,45 @@ package com.bridgelabz.fundoonotes.response;
 
 public class Response 
 {
-	private String statusCode;         // create status integer for user response
-	private String message;           // create message in String for give the user message
-	//private Object data;
-	
-	public Response()
+	private int status;         // create status integer for user response
+	private String message;    // create message in String for give the user message
+	private Object data;
+
+	public Response(int status, String message, Object data) 
 	{
-		
+	super();
+	this.status = status;
+	this.message = message;
+	this.data = data;
 	}
-	public Response(String statusCode, String message)
+
+	public int getStatus() 
 	{
-		super();
-		this.statusCode = statusCode;
-		this.message = message;
+	return status;
 	}
-	
-	public String getStatusCode()
+
+	public void setStatus(int status)
 	{
-		return statusCode;
+	this.status = status;
 	}
-	
-	public void setStatusCode(String statusCode) 
-	{
-		this.statusCode = statusCode;
-	}
-	
+
 	public String getMessage() 
 	{
-		return message;
+	return message;
 	}
-	
+
 	public void setMessage(String message) 
 	{
-		this.message = message;
-	}	
+	this.message = message;
+	}
+
+	public Object getData() 
+	{
+	return data;
+	}
+
+	public void setData(Object data)
+	{
+	this.data = data;
+	}
 }

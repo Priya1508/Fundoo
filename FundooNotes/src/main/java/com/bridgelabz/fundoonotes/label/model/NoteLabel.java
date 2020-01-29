@@ -1,23 +1,16 @@
 package com.bridgelabz.fundoonotes.label.model;
 
+import javax.validation.constraints.NotBlank;
+
 import org.springframework.data.annotation.Id;
 
 public class NoteLabel 
 {
 	@Id
-	private String id;
 	private String labelId;
-	private String noteId;
+	@NotBlank
+	private String labelName;
 	
-	public String getId()
-	{
-		return id;
-	}
-	
-	public void setId(String id) 
-	{
-		this.id = id;
-	}
 	
 	public String getLabelId()
 	{
@@ -29,13 +22,14 @@ public class NoteLabel
 		this.labelId = labelId;
 	}
 	
-	public String getNoteId() 
+
+	public String getLabelName() 
 	{
-		return noteId;
+		return labelName;
 	}
-	
-	public void setNoteId(String noteId)
+
+	public void setLabelName(String labelName) 
 	{
-		this.noteId = noteId;
+		this.labelName = labelName;
 	}
 }

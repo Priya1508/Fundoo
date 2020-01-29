@@ -1,5 +1,7 @@
 package com.bridgelabz.fundoonotes.notes.service;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -9,104 +11,115 @@ import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundoonotes.label.dto.LabelDto;
 import com.bridgelabz.fundoonotes.label.model.NoteLabel;
-import com.bridgelabz.fundoonotes.label.model.UserLabel;
 import com.bridgelabz.fundoonotes.label.repository.NoteLabelRepository;
-import com.bridgelabz.fundoonotes.label.repository.UserLabelRepository;
-import com.bridgelabz.fundoonotes.label.response.LabelResponse;
 import com.bridgelabz.fundoonotes.model.User;
-import com.bridgelabz.fundoonotes.notes.dto.NoteDto;
-import com.bridgelabz.fundoonotes.notes.model.Notes;
-import com.bridgelabz.fundoonotes.notes.repository.NotesRepository;
 import com.bridgelabz.fundoonotes.repository.UserRepository;
+import com.bridgelabz.fundoonotes.response.Response;
 import com.bridgelabz.fundoonotes.utility.Jwt;
 
 @Service
 @PropertySource("classpath:message.properties")
 public class LabelImpl implements LabelService
-{
-	@Autowired
-	private Jwt jwt;
-	
-	@Autowired
-	private UserLabelRepository userLabelRepo;
-	
-	@Autowired
-	private UserRepository userRepository;
-	
-	@Autowired
-	private NotesRepository noteRepository;
-	
+{	
 	@Autowired
 	private NoteLabelRepository noteLabelRepo;
 	
 	@Autowired
 	private Environment environment;
+	
+	@Autowired
+	private Jwt jwt;
+	
+	@Autowired
+	private UserRepository userRepo;
+	
+	ModelMapper mapper = new ModelMapper();
 
+	/**
+	 *Purpose : To create a note label
+	 *@return : Given the response if the not label is created successfully or not
+	 */
 	@Override
-	public LabelResponse createLabel(LabelDto labelDto, String token)
+	public Response createLabel(LabelDto labelDto, String token)
 	{
 		String email = jwt.getUserToken(token);
-		User user = userRepository.findByEmailId(email);
+		User user = userRepo.findByEmailId(email);
 		if(user != null)
 		{
-			ModelMapper mapper = new ModelMapper();
-			UserLabel userLabel = mapper.map(labelDto, UserLabel.class);
-			userLabelRepo.save(userLabel);
-			return new LabelResponse(200, environment.getProperty("LABEL_CREATED"), HttpStatus.OK);
+			NoteLabel label = mapper.map(labelDto, NoteLabel.class);
+			noteLabelRepo.save(label);
+			return new Response(200, environment.getProperty("NOTE_LABEL_CREATE"), HttpStatus.OK);
 		}
-		return new LabelResponse(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 *Purpose : To read the details of the note label
+	 *@return : Given the response if the note label is successfully read or not
+	 */
 	@Override
-	public LabelResponse readLabel(String id) 
+	public Response readLabel(String labelId) 
 	{
-		UserLabel user = userLabelRepo.findById(id).get();
+		jwt.checkByLabelId(labelId);
+		NoteLabel label = noteLabelRepo.findById(labelId).get();
+		if(label != null)
+		{
+			return new Response(200, environment.getProperty("NOTE_LABEL_READ"), label);
+		}
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
+	}
+
+	/**
+	 *Purpose : To update the label note
+	 *@return : Given the response if the note label is successfully updated or not
+	 */
+	@Override
+	public Response updateLabel(LabelDto labelDto, String labelId, String token) 
+	{
+		jwt.checkByLabelId(labelId);
+		String email = jwt.getUserToken(token);
+		User user = userRepo.findByEmailId(email);
 		if(user != null)
 		{
-			return new LabelResponse(200, environment.getProperty("LABEL_READ"), user);
+			NoteLabel label = noteLabelRepo.findById(labelId).get();
+			label.setLabelName(labelDto.getLabelName());
+			noteLabelRepo.save(label);
+			return new Response(200, environment.getProperty("NOTE_LABEL_UPDATE"), HttpStatus.OK);
 		}
-		return new LabelResponse(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
+	/**
+	 *Purpose : To delete the note label
+	 *@return : Given the response if the note label is successfully deleted or not
+	 */
 	@Override
-	public LabelResponse updateLabel(LabelDto labelDto, String id)
+	public Response deleteLabel(LabelDto labelDto, String labelId, String token) 
 	{
-		UserLabel user = userLabelRepo.findById(id).get();
-		ModelMapper mapper = new ModelMapper();
-	    user = mapper.map(labelDto, UserLabel.class);
+		jwt.checkByLabelId(labelId);
+		String email = jwt.getUserToken(token);
+		User user = userRepo.findByEmailId(email);
 		if(user != null)
 		{
-			userLabelRepo.save(user);
-			return new LabelResponse(200, environment.getProperty("LABEL_UPDATE"), HttpStatus.OK);
+			NoteLabel label = noteLabelRepo.findById(labelId).get();
+			noteLabelRepo.delete(label);
+			return new Response(200, environment.getProperty("NOTE_LABEL_DELETE"), HttpStatus.OK);
 		}
-		return new LabelResponse(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
-
-	@Override
-	public LabelResponse deleteLabel(LabelDto labelDto, String id)
+	
+	/**
+	 *Purpose : To all the list of labels
+	 *@return : Returns the list of labels
+	 */
+	public List<NoteLabel> getAll()
 	{
-		UserLabel user = userLabelRepo.findById(id).get();
-		ModelMapper mapper = new ModelMapper();
-		user = mapper.map(labelDto, UserLabel.class);
-		if(user != null)
+		List<NoteLabel> label = noteLabelRepo.findAll();
+		if(label != null)
 		{
-			userLabelRepo.delete(user);
-			return new LabelResponse(200, environment.getProperty("LABEL_DELETE"), HttpStatus.OK);
+			System.out.println(label);
+			return label;
 		}
-		return new LabelResponse(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
-	}
-
-	@Override
-	public LabelResponse createNoteLabel(NoteDto noteDto, String noteId)
-	{
-		Notes note = noteRepository.findById(noteId).get(); 
-		if(note != null)
-		{
-			ModelMapper mapper = new ModelMapper();
-			NoteLabel noteLabel = mapper.map(note, NoteLabel.class);
-			noteLabelRepo.save(noteLabel);
-			return new LabelResponse(200, environment.getProperty("NOTE_LABEL_CREATE"), HttpStatus.OK);
-		}
-		return new LabelResponse(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
+		return null;
 	}
 }

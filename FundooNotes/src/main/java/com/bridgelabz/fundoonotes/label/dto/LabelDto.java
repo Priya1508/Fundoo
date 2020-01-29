@@ -1,25 +1,17 @@
 package com.bridgelabz.fundoonotes.label.dto;
 
+import javax.validation.constraints.NotBlank;
+
 public class LabelDto 
 {
-	private String userId;
+	@NotBlank
 	private String labelName;
-	
-	public String getUserId() 
-	{
-		return userId;
-	}
-	
-	public void setUserId(String userId) 
-	{
-		this.userId = userId;
-	}
-	
-	public String getLabelName() 
+
+	public String getLabelName()
 	{
 		return labelName;
 	}
-	
+
 	public void setLabelName(String labelName) 
 	{
 		this.labelName = labelName;

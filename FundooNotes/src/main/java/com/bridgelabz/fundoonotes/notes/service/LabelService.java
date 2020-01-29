@@ -1,18 +1,20 @@
 package com.bridgelabz.fundoonotes.notes.service;
 
+import java.util.List;
+
 import com.bridgelabz.fundoonotes.label.dto.LabelDto;
-import com.bridgelabz.fundoonotes.label.response.LabelResponse;
-import com.bridgelabz.fundoonotes.notes.dto.NoteDto;
+import com.bridgelabz.fundoonotes.label.model.NoteLabel;
+import com.bridgelabz.fundoonotes.response.Response;
 
 public interface LabelService
 {
-	public LabelResponse createLabel(LabelDto labelDto, String token);
+	public Response createLabel(LabelDto labelDto, String token);
 	
-	public LabelResponse readLabel(String id);
+	public Response readLabel(String labelId);
 	
-	public LabelResponse updateLabel(LabelDto labelDto, String id);
+	public Response updateLabel(LabelDto labelDto, String labelId, String token);
 	
-	public LabelResponse deleteLabel(LabelDto labelDto, String id);
+	public Response deleteLabel(LabelDto labelDto, String labelId, String token);
 	
-	public LabelResponse createNoteLabel(NoteDto noteDto, String noteId);
+	public List<NoteLabel> getAll();
 }

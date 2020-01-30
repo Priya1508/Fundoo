@@ -20,7 +20,7 @@ import com.bridgelabz.fundoonotes.notes.service.LabelService;
 import com.bridgelabz.fundoonotes.response.Response;
 
 @RestController
-@RequestMapping("/noteLabel")
+@RequestMapping("fundoo/noteLabel")
 public class NoteLabelController
 {
 	@Autowired
@@ -45,9 +45,9 @@ public class NoteLabelController
 	}
 	
 	@PostMapping("/delete")
-	public ResponseEntity<Response> deleteLabel(@Valid @RequestBody LabelDto labelDto, @RequestParam String labelId, @RequestParam String token)
+	public ResponseEntity<Response> deleteLabel(@RequestParam String labelId, @RequestParam String token)
 	{
-		return new ResponseEntity<Response>(service.deleteLabel(labelDto, labelId, token), HttpStatus.OK);
+		return new ResponseEntity<Response>(service.deleteLabel(labelId, token), HttpStatus.OK);
 	}
 	
 	@GetMapping("/getall")

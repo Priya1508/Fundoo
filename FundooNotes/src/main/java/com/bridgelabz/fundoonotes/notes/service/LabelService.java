@@ -14,7 +14,7 @@ public interface LabelService
 	
 	public Response updateLabel(LabelDto labelDto, String labelId, String token);
 	
-	public Response deleteLabel(LabelDto labelDto, String labelId, String token);
+	public Response deleteLabel(String labelId, String token);
 	
 	public List<NoteLabel> getAll();
 }

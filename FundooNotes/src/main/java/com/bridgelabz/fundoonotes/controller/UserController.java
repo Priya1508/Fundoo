@@ -1,7 +1,6 @@
 package com.bridgelabz.fundoonotes.controller;
 
 import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import com.bridgelabz.fundoonotes.response.Response;
 import com.bridgelabz.fundoonotes.service.UserService;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/fundoo/user")
 public class UserController
 {
 	@Autowired
@@ -35,9 +34,9 @@ public class UserController
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<Response> login(@Valid @RequestBody LoginDto loginDto,@RequestParam String token)
+	public ResponseEntity<Response> login(@Valid @RequestBody LoginDto loginDto)
 	{
-		return new ResponseEntity<Response> (service.login(loginDto, token),HttpStatus.OK);
+		return new ResponseEntity<Response> (service.login(loginDto),HttpStatus.OK);
 	}
 	
 	@PostMapping("/forgotpassword")
@@ -47,14 +46,20 @@ public class UserController
 	}
 	
 	@PostMapping("/resetpassword")
-	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto,String token)
+	public ResponseEntity<Response> resetPassword(@Valid @RequestBody ResetPasswordDto resetPasswordDto)
 	{
-		return new ResponseEntity<Response> (service.resetPassword(resetPasswordDto, token),HttpStatus.OK);
+		return new ResponseEntity<Response> (service.resetPassword(resetPasswordDto),HttpStatus.OK);
 	}
 	
 	@GetMapping("/getall")
 	public ResponseEntity<List> getAll()
 	{
 		return new ResponseEntity<List> (service.getAll(),HttpStatus.OK);
+	}
+	
+	@PostMapping("/verify")
+	public ResponseEntity<Response> isVerify(@RequestParam String token)
+	{
+		return new ResponseEntity<Response>(service.isVerified(token), HttpStatus.OK);
 	}
 }

@@ -13,11 +13,13 @@ public interface UserService
 {
 	public Response addUser(RegistrationDto registrationDto);
 	
-	public Response login(LoginDto loginDto,String token);
+	public Response login(LoginDto loginDto);
 	
 	public Response forgotPassword(ForgotPasswordDto forgotPasswordDto);
 	
-	public Response resetPassword(ResetPasswordDto resetPasswordDto,String token);
+	public Response resetPassword(ResetPasswordDto resetPasswordDto);
 	
 	public List<User> getAll();
+	
+	public Response isVerified(String token);
 }

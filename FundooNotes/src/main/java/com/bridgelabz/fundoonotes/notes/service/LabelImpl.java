@@ -94,7 +94,7 @@ public class LabelImpl implements LabelService
 	 *@return : Given the response if the note label is successfully deleted or not
 	 */
 	@Override
-	public Response deleteLabel(LabelDto labelDto, String labelId, String token) 
+	public Response deleteLabel(String labelId, String token) 
 	{
 		jwt.checkByLabelId(labelId);
 		String email = jwt.getUserToken(token);

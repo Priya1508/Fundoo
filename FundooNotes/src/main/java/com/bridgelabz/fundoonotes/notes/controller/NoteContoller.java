@@ -17,7 +17,7 @@ import com.bridgelabz.fundoonotes.notes.service.ServiceNote;
 import com.bridgelabz.fundoonotes.response.Response;
 
 @RestController
-@RequestMapping("/notes")
+@RequestMapping("fundoo/notes")
 public class NoteContoller 
 {
 	@Autowired

@@ -20,8 +20,7 @@ public class User
 	private String password;
 	@NotBlank
 	private String confirmPassword;
-	
-	private String verify;
+	private boolean isVerify;
 	
 	public String getFirstName() 
 	{
@@ -72,16 +71,15 @@ public class User
 	{
 		this.confirmPassword = confirmPassword;
 	}
-	
 
-	public String getVerify()
+	public boolean isVerify() 
 	{
-		return verify;
+		return isVerify;
 	}
 
-	public void setVerify(String verify) 
+	public void setVerify(boolean isVerify)
 	{
-		this.verify = verify;
+		this.isVerify = isVerify;
 	}
 
 	@Override

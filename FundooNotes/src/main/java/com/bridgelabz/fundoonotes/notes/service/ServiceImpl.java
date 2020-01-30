@@ -36,6 +36,8 @@ public class ServiceImpl implements ServiceNote
 	
 	@Autowired
 	private Jwt jwt;
+	
+	ModelMapper mapper = new ModelMapper();
 
 	/**
 	 *Purpose : To create a note
@@ -48,7 +50,6 @@ public class ServiceImpl implements ServiceNote
 		User user = userRepository.findByEmailId(email);
 		if (user != null)
 		{
-			ModelMapper mapper = new ModelMapper();
 			Notes note = mapper.map(noteDto, Notes.class);
 			note.setLocalDate(LocalDate.now());
 			repository.save(note);

@@ -51,12 +51,11 @@ public class UserImpl implements UserService
 		User user = mapper.map(registrationDto, User.class);
 		System.out.println(user.getEmailId());
 		User userExist = repository.findByEmailId(registrationDto.getEmailId());
-
-		if (userExist != null) 
+		if (userExist != null)
 		{
 			return new Response(400, environment.getProperty("USER_PRESENT"), HttpStatus.BAD_REQUEST);
-		} 
-		else 
+		}
+		else
 		{
 			if (registrationDto.getPassword().equals(registrationDto.getConfirmPassword()))
 			{
@@ -75,24 +74,20 @@ public class UserImpl implements UserService
 	 * @return : Given the response is successfully logged in or not
 	 */
 	@Override
-	public Response login(LoginDto loginDto, String token)
+	public Response login(LoginDto loginDto)
 	{
-		String email = jwt.getUserToken(token);
-		User user = mapper.map(loginDto, User.class);
-		User repo = repository.findByEmailId(email);
-		if (repo == null) 
+		User user = repository.findByEmailId(loginDto.getEmailId());
+		if(user.isVerify() == true)
 		{
-			return new Response(400, environment.getProperty("USER_NOT_FOUND"), HttpStatus.BAD_REQUEST);
+			if(user.getPassword().equals(loginDto.getPassword()))
+			{
+				String token = jwt.createToken(loginDto.getEmailId());
+				jms.sendMail(loginDto.getEmailId(), token);
+				return new Response(200, environment.getProperty("LOGIN_SUCCESS"), HttpStatus.OK);
+			}
+			return new Response(400, environment.getProperty("INVALID_PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
-		else 
-		{
-				if (repo.getPassword().equals(loginDto.getPassword())) 
-				{
-					repository.save(user);
-					return new Response(200, environment.getProperty("LOGIN_SUCCESS"), HttpStatus.OK);
-				}
-			return new Response(400, environment.getProperty("TOKEN_ERROR"), HttpStatus.BAD_REQUEST);
-		}
+		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -100,11 +95,11 @@ public class UserImpl implements UserService
 	 * @return : Given the response for forgot password is successful or not
 	 */
 	@Override
-	public Response forgotPassword(ForgotPasswordDto forgotPasswordDto) 
+	public Response forgotPassword(ForgotPasswordDto forgotPasswordDto)
 	{
 		User user = mapper.map(forgotPasswordDto, User.class);
 		User email = repository.findByEmailId(forgotPasswordDto.getEmailId());
-		if (email != null) 
+		if (email != null)
 		{
 			String token = jwt.createToken(forgotPasswordDto.getEmailId());
 			jms.sendMail(forgotPasswordDto.getEmailId(), token);
@@ -118,17 +113,17 @@ public class UserImpl implements UserService
 	 * @return : Given the response if the password is successfully reset or not
 	 */
 	@Override
-	public Response resetPassword(ResetPasswordDto resetPasswordDto, String token) 
+	public Response resetPassword(ResetPasswordDto resetPasswordDto)
 	{
-		User user = mapper.map(resetPasswordDto, User.class);
-		User email = repository.findByEmailId(resetPasswordDto.getEmailId());
-		if (email != null)
+		User user = repository.findByEmailId(resetPasswordDto.getEmailId());
+		if (user != null)
 		{
 			if (resetPasswordDto.getPassword().equals(resetPasswordDto.getConfirmPassword()))
 			{
 				repository.save(user);
 				return new Response(200, environment.getProperty("RESET_SUCCESS"), HttpStatus.OK);
 			}
+			return new Response(400, environment.getProperty("INVALID_PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 		return new Response(400, environment.getProperty("INVALID_CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
@@ -147,5 +142,20 @@ public class UserImpl implements UserService
 			return user1;
 		}
 		return null;
+	}
+	
+	public Response isVerified(String token)
+	{
+		String email = jwt.getUserToken(token);
+		User user = repository.findByEmailId(email);
+		System.out.println("user"+email);
+		if(user != null)
+		{
+			user.setVerify(true);
+			repository.save(user);
+			return new Response(200, environment.getProperty("TOKEN_SUCCESS"), HttpStatus.OK);
+		}
+		else
+			return new Response(400, environment.getProperty("TOKEN_ERROR"), HttpStatus.BAD_REQUEST);
 	}
 }
